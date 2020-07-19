@@ -1,5 +1,4 @@
 .nav-bar {
-  list-style: none;
   margin-left: -8px;
   margin-top: -21px;
   padding: 0;
@@ -10,6 +9,34 @@
   position: fixed;
   /* Make it stick, even on scroll */
   overflow: auto;
+}
+
+.channelT {
+  font-size: 2vw;
+  text-align: center;
+}
+
+ul {
+  list-style: none;
+}
+
+li a {
+  font-size: 1.4vw;
+  display: block;
+  color: grey;
+  padding: 8px 20px;
+  text-align: right;
+  text-decoration: none;
+}
+
+li a.active {
+  background-color: #4CAF50;
+  color: white;
+}
+
+li a:hover:not(.active) {
+  background-color: #555;
+  color: white;
 }
 
 body {
