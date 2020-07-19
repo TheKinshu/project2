@@ -11,17 +11,16 @@
         <div class="nav-bar">
             <p class="channelT">Channel</p>
             <ul> 
-                <li><a href="">sfsdfasdasdadasdsdf</a></li>
+                <li><a href=""></a></li>
                 {% block sidebar %} {% endblock %}
             </ul>
         </div>
         <div class="content">
-
+            {% block contents %} {% endblock %}
         </div>
-        {% block body %} {% endblock %} 
         <div class="onlineBar">
             <ul>
-
+                {% block accounts %} {% endblock %} 
             </ul>
         </div>
     </body>
