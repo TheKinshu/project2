@@ -11,3 +11,9 @@ socketio = SocketIO(app)
 @app.route("/")
 def index():
     return render_template("index.html")
+
+@socketio.on("messages")
+def mes(data):
+    message = data["message"]
+    username = data["user"]
+    emit("message sent", {"message": message, "user": username}, broadcast=True)

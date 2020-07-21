@@ -11,15 +11,16 @@
   overflow: auto;
 }
 
-.channelT {
-  margin-top: -2px;
-  font-size: 2vw;
-  text-align: center;
-  border: black;
-  border-style: none none solid none;
-  border-width: thin;
+@media only screen and (min-width: 480px) {
+  .channelT {
+    margin-top: 10px;
+    font-size: 2vw;
+    text-align: center;
+    border: black;
+    border-style: none none solid none;
+    border-width: thin;
+  }
 }
-
 ul {
   list-style: none;
 }
