@@ -7,11 +7,11 @@
         {% block head %} {% endblock %}
     </head>
 
-    <body>
+    <body onload="getUser()">
         <div class="nav-bar">
             <p class="channelT">Channel</p>
             <ul> 
-                <li><a href=""></a></li>
+                <li><a href="">("Default")General</a></li>
                 {% block sidebar %} {% endblock %}
             </ul>
         </div>
@@ -22,7 +22,7 @@
             {% block contents %} {% endblock %}
         </div>
         <div class="onlineBar">
-            <ul>
+            <ul id="userID">
                 {% block accounts %} {% endblock %} 
             </ul>
         </div>

@@ -1,21 +1,47 @@
-var user = "654654";
+var user = "asdfasd";
+
+function getUser(){
+}
 
 document.addEventListener('DOMContentLoaded', () => {
-    
-    var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
+    user = prompt("Please Enter a Username");
 
+    var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
     socket.on('connect', () => {
+
+        socket.emit('userDisplay',{"user": user});
+        console.log("username is " + user);
+        // When the message sent button is clicked
         document.querySelector('button').onclick = ()=>{
+            // Get user message
             const message = document.getElementById("uText").value;
-            socket.emit('messages', {"message": message, "user": user});
-        }
+
+            // Get current timestamp
+            let today = new Date();
+            let time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+            let dateTime = time;
+
+            // Check if messages is empty
+            if(message != ""){
+                socket.emit('messages', {"time": dateTime ,"message": message, "user": user});
+                document.getElementById("uText").value = "";
+            }
+        }// End of Message Button
+
+    });// The End of Connect
+
+    socket.on('connectedU', data =>{
+        const li = document.createElement('li');
+
+        li.innerHTML = `${data.user}`;
+        console.log(data.user);
+        document.querySelector('#userID').append(li);
     });
 
+    // Sending message to display
     socket.on('message sent', data =>{
         const li = document.createElement('li');
-        li.innerHTML = `${data.user}: ${data.message}`;
-
+        li.innerHTML = `${data.user} ${data.time}:<br> ${data.message}`;
         document.querySelector('#mBoard').append(li);
-        document.getElementById("uText").value = "";
     });
 });

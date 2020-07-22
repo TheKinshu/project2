@@ -16,4 +16,10 @@ def index():
 def mes(data):
     message = data["message"]
     username = data["user"]
-    emit("message sent", {"message": message, "user": username}, broadcast=True)
+    time = data["time"]
+    emit("message sent", {"time": time,"message": message, "user": username}, broadcast=True)
+
+@socketio.on("userDisplay")
+def user(data):
+    user = data["user"]
+    emit("connectedU", {"user": user}, broadcast=True);
