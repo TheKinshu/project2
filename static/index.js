@@ -1,8 +1,3 @@
-var user = "asdfasd";
-
-function getUser(){
-}
-
 document.addEventListener('DOMContentLoaded', () => {
     user = prompt("Please Enter a Username");
 
@@ -31,11 +26,17 @@ document.addEventListener('DOMContentLoaded', () => {
     });// The End of Connect
 
     socket.on('connectedU', data =>{
-        const li = document.createElement('li');
+        var userList = document.querySelector('#userID');
+        while(userList.firstChild){
+            userList.removeChild(userList.firstChild);
+        }
 
-        li.innerHTML = `${data.user}`;
-        console.log(data.user);
-        document.querySelector('#userID').append(li);
+        for(i = 0; i < data.user.length; i++){
+            const li = document.createElement('li');
+            li.innerHTML = `${data.user[i]}`;
+            document.querySelector('#userID').append(li);
+        }
+
     });
 
     // Sending message to display
