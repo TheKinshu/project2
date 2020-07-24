@@ -10,14 +10,14 @@
     <body>
         <div class="nav-bar">
             <p class="channelT">Channel</p>
-            <ul> 
-                <li><a href="">("Default")General</a></li>
+            <button class="addChannel" id="newChannel">+</button>
+            <ul id="channelB"> 
+                <li><a href="#">("Default")General</a></li>
                 {% block sidebar %} {% endblock %}
             </ul>
         </div>
         <div class="content">
             <ul id="mBoard">
-
             </ul>
             {% block contents %} {% endblock %}
         </div>
