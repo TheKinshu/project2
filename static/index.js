@@ -1,4 +1,4 @@
-var user;
+var user = "";
 
 var initCount = 0;
 
@@ -8,7 +8,11 @@ document.addEventListener('DOMContentLoaded', () => {
     socket.on('connect', () => {
         //
         if(initCount == 0){
-            user = prompt("Please Enter a Username");
+            while(user == ""){
+                user = prompt("Please Enter a Username");
+                if(user == "")
+                    alert("Please enter a valid username")
+            }
             socket.emit('userDisplay',{"user": user});
             socket.emit('addchannel', {"room": ""});
             socket.emit('loadMessage', {"room": "General"});
@@ -29,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 socket.emit('messages', {"time": dateTime ,"message": message, "user": user});
                 document.getElementById("uText").value = "";
             }
-        }// End of Message Button
+        };// End of Message Button
         //
         document.querySelector('button#newChannel').onclick = ()=>{
             let nChannel = prompt("Please Enter a new channel name");
@@ -40,7 +44,9 @@ document.addEventListener('DOMContentLoaded', () => {
             else{
                 socket.emit('addchannel', {"room": nChannel});
             }
-        }
+        };
+        
+
 
     });// The End of Connect
 
@@ -52,9 +58,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
         for(i = 0; i < data.channels.length; i++){
             const li = document.createElement('li');
-            li.innerHTML = `<a href="#">` + `${data.channels[i]}` + `</a>`;
+            li.innerHTML = `<a id="channel-change" data-channel="` + `${data.channels[i]}` + `">` + `${data.channels[i]}` + `</a>`;
             document.querySelector('#channelB').append(li);
         }
+
+        document.querySelectorAll('#channel-change').forEach(function(button) {
+            button.onclick = function() {
+                socket.emit('loadMessage', {"room": button.dataset.channel});
+            };
+        });
     });
 
     socket.on('connectedU', data =>{
@@ -83,21 +95,17 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     socket.on('updateRoom', data => {
-        console.log("be Message Socket");
 
         var messageBoard = document.querySelector('#mBoard');
         while(messageBoard.firstChild){
             messageBoard.removeChild(messageBoard.firstChild);
         }
-        console.log("mid Message Socket");
-
 
         for(i = 0; i < data.message.length; i++){
             const li = document.createElement('li');
             li.innerHTML = `${data.user[i]}` + ` <${data.time[i]}>` +  ` :<br> ${data.message[i]}`;
             document.querySelector('#mBoard').append(li);
         }
-        console.log("End Message Socket");
         
     });
 });

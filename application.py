@@ -25,6 +25,7 @@ currentChannel = 'General'
 # to create the "General" chat room
 channelMessages[currentChannel] = deque()
 
+
 @app.route("/")
 def index():
     return render_template("index.html")
@@ -51,14 +52,16 @@ def create(data):
 
 @socketio.on("messages")
 def mes(data):
-    
+    if session.get("currentR") == "":
+        session["currentR"] = "General" 
+
     # Storing temp data of users
     message = data["message"]
     username = data["user"]
     time = data["time"]
 
     # Store user message in channelMessages
-    channelMessages[currentChannel].append([time, username, message])
+    channelMessages[session.get("currentR")].append([time, username, message])
 
     emit("message sent", {"time": time,"message": message, "user": username}, broadcast=True)
 
@@ -66,7 +69,7 @@ def mes(data):
 def loadM(data):
 
     currentChannel =  data["room"]
-
+    session["currentR"] = currentChannel
     timex = []
     messagex = []
     userx = []
