@@ -30,6 +30,9 @@ channelMessages[currentChannel] = deque()
 def index():
     return render_template("index.html")
 
+@app.route("/Logout.html")
+def logout():
+    return render_template("Logout.html")
 
 @socketio.on("addchannel")
 def create(data):
@@ -85,5 +88,13 @@ def loadM(data):
 @socketio.on("userDisplay")
 def user(data):
     # Add new user to the users list
-    users.append(data["user"])
+    if data['user'] not in users:
+        users.append(data["user"])
+    session["user"] = data["user"]
+    emit("connectedU", {"user": users}, broadcast=True)
+
+@socketio.on("logout")
+def log(data):
+    if data['user'] in users:
+        users.remove(data['user'])
     emit("connectedU", {"user": users}, broadcast=True)

@@ -1,23 +1,29 @@
 var user = "";
 
-var initCount = 0;
-
 document.addEventListener('DOMContentLoaded', () => {
-
     var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
     socket.on('connect', () => {
-        //
-        if(initCount == 0){
-            while(user == ""){
+
+        // Remembering user's name
+        user = localStorage.getItem('user');
+
+        // Check if user is new to server
+        if(user == null || user == ""){
+            // Making sure user is entering a valid string
+            while(user == "" || user == null){
                 user = prompt("Please Enter a Username");
-                if(user == "")
+                if(user == "" || user == null)
                     alert("Please enter a valid username")
             }
-            socket.emit('userDisplay',{"user": user});
-            socket.emit('addchannel', {"room": ""});
-            socket.emit('loadMessage', {"room": "General"});
-            initCount++;
+            localStorage.setItem('user', user);
         }
+
+        socket.emit('userDisplay',{"user": user});
+        socket.emit('addchannel', {"room": ""});
+        socket.emit('loadMessage', {"room": "General"});   
+        
+        // end of checking
+
         // When the message sent button is clicked
         document.querySelector('button#sendMessage').onclick = ()=>{
             // Get user message
@@ -46,7 +52,15 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         };
         
+        document.querySelector('button#logout').onclick = ()=>{
+            let log = confirm("Do you want to log off?")
 
+            if(log){
+                socket.emit("logout", {"user": user});
+                localStorage.clear();
+                location.replace("/Logout.html")
+            }
+        };
 
     });// The End of Connect
 
