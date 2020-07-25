@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
         socket.emit('userDisplay',{"user": user});
         socket.emit('addchannel', {"room": ""});
         socket.emit('loadMessage', {"room": "General"});   
-        
+
         // end of checking
 
         // When the message sent button is clicked
@@ -32,11 +32,10 @@ document.addEventListener('DOMContentLoaded', () => {
             // Get current timestamp
             let today = new Date();
             let time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
-            let dateTime = time;
 
             // Check if messages is empty
             if(message != ""){
-                socket.emit('messages', {"time": dateTime ,"message": message, "user": user});
+                socket.emit('messages', {"time": time ,"message": message, "user": user});
                 document.getElementById("uText").value = "";
             }
         };// End of Message Button
@@ -58,7 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if(log){
                 socket.emit("logout", {"user": user});
                 localStorage.clear();
-                location.replace("/Logout.html")
+                location.replace("/logout")
             }
         };
 

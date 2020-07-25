@@ -30,7 +30,7 @@ channelMessages[currentChannel] = deque()
 def index():
     return render_template("index.html")
 
-@app.route("/Logout.html")
+@app.route("/logout")
 def logout():
     return render_template("Logout.html")
 
