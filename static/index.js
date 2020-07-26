@@ -1,6 +1,8 @@
 var user = "";
 var last_channel = "";
 
+
+
 document.addEventListener('DOMContentLoaded', () => {
     var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
     socket.on('connect', () => {
@@ -58,7 +60,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 socket.emit('addchannel', {"room": nChannel});
             }
         };
+
+        const module = {
+            loadDocument: (url) => {
+                socket.emit('uploadImage', {"url": url});
+            }
+        };
         
+        document.querySelector('input[type=file]').addEventListener('input', function (evt) {
+            let today = new Date();
+            let time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+            let file = this.files[0];
+            let url = URL.createObjectURL(file);
+            module.loadDocument(url);
+            socket.emit('messages', {"time": time ,"message": url, "user": user});
+        });
+
         document.querySelector('button#logout').onclick = ()=>{
             let log = confirm("Do you want to log off?")
 
@@ -115,6 +132,13 @@ document.addEventListener('DOMContentLoaded', () => {
         socket.emit('loadMessage', {"room": last_channel});   
     });
 
+    socket.on('image sent', data => {
+        const li = document.createElement('li');
+        li.innerHTML = `<img src="` + data.image + `">`;
+        document.querySelector('#mBoard').append(li);
+        socket.emit('loadMessage', {"room": last_channel});  
+    });
+
     socket.on('error', data => {
         alert("Error: " + data.error);
     });
@@ -128,7 +152,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         for(i = 0; i < data.message.length; i++){
             const li = document.createElement('li');
-            li.innerHTML = `${data.user[i]}` + ` <${data.time[i]}>` +  ` :<br> ${data.message[i]}`;
+            if(data.message[i].search("blob:") == -1){
+                li.innerHTML = `${data.user[i]}` + ` <${data.time[i]}>` +  ` :<br> ${data.message[i]}`;
+            }
+            else{
+                li.innerHTML = `<img src="` + `${data.message[i]}` + `" width="200">`;
+            }
             document.querySelector('#mBoard').append(li);
         }
         

@@ -70,7 +70,10 @@ def mes(data):
     # Store user message in channelMessages
     channelMessages[session.get("currentR")].append([time, username, message])
 
-    emit("message sent", {"time": time,"message": message, "user": username}, broadcast=True)
+    if message.find('blob:') == -1:
+        emit("message sent", {"time": time,"message": message, "user": username}, broadcast=True)
+    else:
+        emit("image sent", {"image": message}, broadcast=True)
 
 @socketio.on("loadMessage")
 def loadM(data):
@@ -102,3 +105,7 @@ def log(data):
     if data['user'] in users:
         users.remove(data['user'])
     emit("connectedU", {"user": users}, broadcast=True)
+
+@socketio.on("uploadImage")
+def upload(data):
+    emit("image sent", {"image": data["url"]}, broadcast=True)
