@@ -1,4 +1,5 @@
 var user = "";
+var last_channel = "";
 
 document.addEventListener('DOMContentLoaded', () => {
     var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
@@ -6,7 +7,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Remembering user's name
         user = localStorage.getItem('user');
-
+        last_channel = localStorage.getItem('last_channel');
+        
         // Check if user is new to server
         if(user == null || user == ""){
             // Making sure user is entering a valid string
@@ -20,7 +22,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         socket.emit('userDisplay',{"user": user});
         socket.emit('addchannel', {"room": ""});
-        socket.emit('loadMessage', {"room": "General"});   
+        
+        if(last_channel == null || last_channel == "General" || last_channel == ""){
+            socket.emit('loadMessage', {"room": "General"});   
+        }
+        else{
+            socket.emit('loadMessage', {"room": last_channel});   
+        }
 
         // end of checking
 
@@ -71,13 +79,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
         for(i = 0; i < data.channels.length; i++){
             const li = document.createElement('li');
-            li.innerHTML = `<a id="channel-change" data-channel="` + `${data.channels[i]}` + `">` + `${data.channels[i]}` + `</a>`;
+            let cName = data.channels[i];
+
+            li.innerHTML = `<a href="/channels/` + `${cName}` + `" id="channel-change" data-channel="` + `${cName}` + `">` + `${cName}` + `</a>`;
             document.querySelector('#channelB').append(li);
         }
 
         document.querySelectorAll('#channel-change').forEach(function(button) {
             button.onclick = function() {
-                socket.emit('loadMessage', {"room": button.dataset.channel});
+                localStorage.setItem('last_channel', button.dataset.channel)
+                
             };
         });
     });
@@ -101,6 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const li = document.createElement('li');
         li.innerHTML = `${data.user}` + ` <${data.time}>` +  ` :<br> ${data.message}`;
         document.querySelector('#mBoard').append(li);
+        socket.emit('loadMessage', {"room": last_channel});   
     });
 
     socket.on('error', data => {

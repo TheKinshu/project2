@@ -34,6 +34,10 @@ def index():
 def logout():
     return render_template("Logout.html")
 
+@app.route("/channels/<name>")
+def channels(name):
+    return render_template("channel.html")
+
 @socketio.on("addchannel")
 def create(data):
 
@@ -82,7 +86,7 @@ def loadM(data):
         userx.append(channelMessages[currentChannel][x][1])
         messagex.append(channelMessages[currentChannel][x][2])
 
-    emit("updateRoom", {"time": timex, "user": userx,  "message": messagex}, broadcast=True)
+    emit("updateRoom", {"time": timex, "user": userx,  "message": messagex})
 
 # This displays new user that joins into the server lobby
 @socketio.on("userDisplay")
