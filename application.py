@@ -109,3 +109,7 @@ def log(data):
 @socketio.on("uploadImage")
 def upload(data):
     emit("image sent", {"image": data["url"]}, broadcast=True)
+
+
+if __name__ == '__main__':
+    socketio.run(app)
