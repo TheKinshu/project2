@@ -75,6 +75,7 @@ def mes(data):
     else:
         emit("image sent", {"image": message}, broadcast=True)
 
+# Load messages from local storage
 @socketio.on("loadMessage")
 def loadM(data):
 
@@ -84,11 +85,13 @@ def loadM(data):
     messagex = []
     userx = []
 
+    # Loops through channels and parse message
     for x in range(len(channelMessages[currentChannel])):
         timex.append(channelMessages[currentChannel][x][0])
         userx.append(channelMessages[currentChannel][x][1])
         messagex.append(channelMessages[currentChannel][x][2])
 
+    # Send parse information to update channel 
     emit("updateRoom", {"time": timex, "user": userx,  "message": messagex})
 
 # This displays new user that joins into the server lobby
@@ -100,12 +103,18 @@ def user(data):
     session["user"] = data["user"]
     emit("connectedU", {"user": users}, broadcast=True)
 
+# Remove user from current online list
 @socketio.on("logout")
 def log(data):
+
+    # Remove user
     if data['user'] in users:
         users.remove(data['user'])
+    
+    # Update user list
     emit("connectedU", {"user": users}, broadcast=True)
 
+# Upload image
 @socketio.on("uploadImage")
 def upload(data):
     emit("image sent", {"image": data["url"]}, broadcast=True)

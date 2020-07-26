@@ -2,7 +2,6 @@ var user = "";
 var last_channel = "";
 
 
-
 document.addEventListener('DOMContentLoaded', () => {
     var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
     socket.on('connect', () => {
@@ -22,7 +21,9 @@ document.addEventListener('DOMContentLoaded', () => {
             localStorage.setItem('user', user);
         }
 
+        //Update current users
         socket.emit('userDisplay',{"user": user});
+        //Update channels created
         socket.emit('addchannel', {"room": ""});
         
         if(last_channel == null || last_channel == "General" || last_channel == ""){
@@ -49,10 +50,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.getElementById("uText").value = "";
             }
         };// End of Message Button
-        //
+
+        // Create a new Channel
         document.querySelector('button#newChannel').onclick = ()=>{
             let nChannel = prompt("Please Enter a new channel name");
 
+            // Check if user enter something
             if(nChannel == "" || nChannel == null){
                 alert("Invalid Channel name");
             }
@@ -67,6 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         };
         
+        // Upload image to local "Client side only"
         document.querySelector('input[type=file]').addEventListener('input', function (evt) {
             let today = new Date();
             let time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
@@ -76,9 +80,11 @@ document.addEventListener('DOMContentLoaded', () => {
             socket.emit('messages', {"time": time ,"message": url, "user": user});
         });
 
+        // Allow user to logout
         document.querySelector('button#logout').onclick = ()=>{
             let log = confirm("Do you want to log off?")
 
+            // Checks if user clicked okay
             if(log){
                 socket.emit("logout", {"user": user});
                 localStorage.clear();
@@ -88,12 +94,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     });// The End of Connect
 
+    // Update Channel
     socket.on('channel display', data =>{
         var channelList = document.querySelector('#channelB');
+
+        // Remove all current channel
         while(channelList.firstChild){
             channelList.removeChild(channelList.firstChild);
         }
 
+        // Loops through a list and re-enter any new channels that has been created
         for(i = 0; i < data.channels.length; i++){
             const li = document.createElement('li');
             let cName = data.channels[i];
@@ -102,6 +112,8 @@ document.addEventListener('DOMContentLoaded', () => {
             document.querySelector('#channelB').append(li);
         }
 
+        // Gives the channels function
+        // Allowing user to change to different text channels
         document.querySelectorAll('#channel-change').forEach(function(button) {
             button.onclick = function() {
                 localStorage.setItem('last_channel', button.dataset.channel)
@@ -110,12 +122,16 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // Check who is currently connected to the server
     socket.on('connectedU', data =>{
+        //
         var userList = document.querySelector('#userID');
+        // Remove all users
         while(userList.firstChild){
             userList.removeChild(userList.firstChild);
         }
 
+        // Update all new users
         for(i = 0; i < data.user.length; i++){
             const li = document.createElement('li');
             li.innerHTML = `${data.user[i]}`;
@@ -132,6 +148,7 @@ document.addEventListener('DOMContentLoaded', () => {
         socket.emit('loadMessage', {"room": last_channel});   
     });
 
+    // Send image to display
     socket.on('image sent', data => {
         const li = document.createElement('li');
         li.innerHTML = `<img src="` + data.image + `">`;
@@ -139,10 +156,12 @@ document.addEventListener('DOMContentLoaded', () => {
         socket.emit('loadMessage', {"room": last_channel});  
     });
 
+    // Error function if an error occurs
     socket.on('error', data => {
         alert("Error: " + data.error);
     });
 
+    // Update all images and messages when reloading channel
     socket.on('updateRoom', data => {
 
         var messageBoard = document.querySelector('#mBoard');
